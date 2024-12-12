@@ -1,7 +1,6 @@
-# autoreason
+# AutoReason: Automatic Few-Shot Reasoning Decomposition
 
-Github repository for the paper titled as "**AutoReason: Automatic Few-Shot Reasoning Decomposition**". 
+## File-Folder Conventions
 
-by Arda Sevinc and Abdurrahman Gumus.
-
-Codes will be available upon publication.
+- `/data`: datasets used in the paper
+-
