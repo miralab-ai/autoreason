@@ -1,5 +1,9 @@
 # AutoReason: Automatic Few-Shot Reasoning Decomposition
 
+## Paper
+
+You can read the paper on [arXiv](https://arxiv.org/abs/2412.06975)
+
 ## Abstract
 
 Chain of Thought (CoT) was introduced in recent research as a method for improving step-by-step reasoning in Large Language Models. However, CoT has limited applications such as its need for hand-crafted few-shot exemplar prompts and no capability to adjust itself to different queries.
