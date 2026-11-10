@@ -6,10 +6,7 @@ type ApiKeys = {
 
 class AiProvider {
   public static getInstance({ openaiKey }: ApiKeys): AiProvider {
-    if (!AiProvider.instance) {
-      AiProvider.instance = new AiProvider(openaiKey);
-    }
-
+    AiProvider.instance ||= new AiProvider(openaiKey);
     return AiProvider.instance;
   }
 
@@ -19,7 +16,6 @@ class AiProvider {
   private readonly autocot: OpenAI;
 
   private constructor(private readonly apiKey: string) {
-    this.apiKey = apiKey;
     this.openAi = new OpenAI({
       apiKey: this.apiKey,
       maxRetries: 10,

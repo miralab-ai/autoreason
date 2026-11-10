@@ -23,6 +23,7 @@ const score = async ({
   try {
     const aiResponse = await openai.chat.completions.create({
       temperature: 0.3,
+      // eslint-disable-next-line @typescript-eslint/naming-convention -- OpenAI API parameter name
       max_tokens: 4000,
       messages,
       model: 'gpt-4-1106-preview',
@@ -38,8 +39,7 @@ const score = async ({
     const scoreNumber = Number.parseInt(content, 10);
 
     if (Number.isNaN(scoreNumber)) {
-      // console.log(`Score is NaN: ${aiResponse.choices[0].message.content}`);
-      // console.log('attempting to extract the score from the response');
+      // The reply is not a bare number: use the first number in it.
 
       const pattern = /\d+/;
       const match = pattern.exec(content);

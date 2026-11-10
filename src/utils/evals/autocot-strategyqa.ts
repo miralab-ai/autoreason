@@ -1,7 +1,7 @@
-import { resolve } from 'node:path';
-import { writeFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { type ChatCompletionMessageParam } from 'openai/resources/index.mjs';
-import StrategyQa from '../../../data/strategyqa/strategyqa_dev.json' assert { type: 'json' };
+import StrategyQa from '../../../data/strategyqa/strategyqa_dev.json' with { type: 'json' };
 import { AiProvider } from '../ai.js';
 import { shuffleArray } from '../shuffle.js';
 import { score } from './score.js';
@@ -13,11 +13,12 @@ const saveEvalResults = async (results: any[]) => {
     'data/strategyqa/runs/autocot',
     `GPT-4-${date.getFullYear()}${
       date.getMonth() + 1
-    }${date.getDay()}-${date.getHours()}:${date.getMinutes()}.json`,
+    }${date.getDate()}-${date.getHours()}:${date.getMinutes()}.json`,
   );
 
   const correctAnswers = results.filter(
-    (result: any) => result.verdict.toLowerCase() === 'correct'.toLowerCase(),
+    (result: { verdict: string }) =>
+      result.verdict.toLowerCase() === 'correct'.toLowerCase(),
   ).length;
 
   const totalAnswers = results.length;
@@ -35,6 +36,7 @@ const saveEvalResults = async (results: any[]) => {
     results,
   };
 
+  await mkdir(dirname(path), { recursive: true });
   await writeFile(path, JSON.stringify(data, null, 2));
   return path;
 };
@@ -58,6 +60,7 @@ const evalAutoCotStrategyQa = async () => {
     const result = await openai.chat.completions.create({
       messages,
       model: 'gpt-4-1106-preview',
+      // eslint-disable-next-line @typescript-eslint/naming-convention -- OpenAI API parameter name
       max_tokens: 4000,
       stream: false,
       temperature: 0.5,
