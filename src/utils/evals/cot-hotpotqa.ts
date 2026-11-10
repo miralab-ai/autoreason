@@ -1,7 +1,7 @@
-import { resolve } from 'node:path';
-import { writeFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { type ChatCompletionMessageParam } from 'openai/resources/index.mjs';
-import HotpotQa from '../../../data/hotpotqa/hotpot_dev_v1_simplified.json' assert { type: 'json' };
+import HotpotQa from '../../../data/hotpotqa/hotpot_dev_v1_simplified.json' with { type: 'json' };
 import { cotHotpotQaPrompt } from '../../config/prompts/cot-hotpotqa.js';
 import { AiProvider } from '../ai.js';
 import { shuffleArray } from '../shuffle.js';
@@ -13,11 +13,12 @@ const saveEvalResults = async (results: any[]) => {
     'data/hotpotqa/runs/cot',
     `${date.getFullYear()}${
       date.getMonth() + 1
-    }${date.getDay()}-${date.getHours()}:${date.getMinutes()}.json`,
+    }${date.getDate()}-${date.getHours()}:${date.getMinutes()}.json`,
   );
 
   const correctAnswers = results.filter(
-    (result: any) => result.verdict.toLowerCase() === 'correct'.toLowerCase(),
+    (result: { verdict: string }) =>
+      result.verdict.toLowerCase() === 'correct'.toLowerCase(),
   ).length;
 
   const totalAnswers = results.length;
@@ -35,6 +36,7 @@ const saveEvalResults = async (results: any[]) => {
     results,
   };
 
+  await mkdir(dirname(path), { recursive: true });
   await writeFile(path, JSON.stringify(data, null, 2));
   return path;
 };
@@ -56,6 +58,7 @@ const evalCotHotpotQa = async () => {
     const result = await openai.chat.completions.create({
       messages,
       model: 'gpt-3.5-turbo-1106',
+      // eslint-disable-next-line @typescript-eslint/naming-convention -- OpenAI API parameter name
       max_tokens: 4000,
       stream: false,
       temperature: 0.3,

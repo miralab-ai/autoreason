@@ -16,6 +16,7 @@ export const autoCotGenerator = async ({ question }: { question: string }) => {
     const response = await autocot.chat.completions.create({
       messages,
       model: 'gpt-4-1106-preview',
+      // eslint-disable-next-line @typescript-eslint/naming-convention -- OpenAI API parameter name
       max_tokens: 4000,
       stream: false,
       temperature: 0.7,
